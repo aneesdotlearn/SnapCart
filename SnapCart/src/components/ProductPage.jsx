@@ -1,10 +1,12 @@
 import React, {useState} from 'react'
 import Navbar from './Navbar';
 import Banner from './Banner';
+import Footer from './Footer'
+import Cart from './Cart';
 
 
-const ProductPage = () => {
-    const [cart, setCart] = useState([]);
+const ProductPage = ({addToCart,cart}) => {
+    const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
     const products = [
   {
     id:1,
@@ -92,14 +94,14 @@ const ProductPage = () => {
   },
 ];
 
-const addToCart =  (product) => {
-    setCart((prevCart) => [...prevCart, product]);
+// const addToCart =  (product) => {
+//     setCart((prevCart) => [...prevCart, product]);
 
-};
+// };
 
   return (
     <div>
-    <Navbar cartCount={cart.length}/>
+    <Navbar cartCount={cartCount}/>
     <Banner/>
     <section className="bg-gray-100 px-3 py-5 min-h-screen">
         <h1 className="text-3xl font-bold text-center mb-4">Our Featured Products</h1> 
@@ -115,7 +117,7 @@ const addToCart =  (product) => {
                         className="h-[200px]"/>
                         <div className="flex flex-col items-center gap-2">
                             <h2 className="text-purple-900">{prod.name}</h2>
-                            <div className='flex flex-row gap-2'><p className='font-bold'>${prod.price}</p><del>${prod.price}</del></div>
+                            <div className='flex flex-row gap-2'><p className='font-bold'>₹{prod.price}</p><del>₹{prod.price}</del></div>
                             {/* <p>{prod.category}</p> */}
                         </div>
 
@@ -128,6 +130,7 @@ const addToCart =  (product) => {
 
         </div>
     </section>
+    <Footer/>
     </div>
   );
 };

@@ -1,7 +1,10 @@
 import React from 'react';
 import search from "../assets/bg-img/search.svg";
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = ({cartCount}) => {
+  
+  const navigate = useNavigate();
   return (
     <nav className="bg-orange-400 text-white py-6">
     <div className="flex justify-between items-center px-4">
@@ -14,7 +17,7 @@ const Navbar = ({cartCount}) => {
       <div className=' flex  gap-2'>
       <button className = "bg-gray-100 text-purple-800 font-semibold py-1 px-2 rounded-lg">Login</button>
       
-      <button className = "bg-gray-100 text-purple-800 font-semibold py-1 px-2 rounded-lg">Cart : {cartCount || 0}</button>
+      <button onClick={()=> navigate("/cart")} className = "bg-gray-100 text-purple-800 font-semibold py-1 px-2 rounded-lg">Cart : {cartCount || 0}</button>
       </div>
     </div>
     </nav>
