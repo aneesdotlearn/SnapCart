@@ -1,42 +1,48 @@
-import React from "react";
+import React, { use } from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import { useDispatch, useSelector } from "react-redux";
+import { increaseQuantity, removeFromCart, decreaseQuantity, clearItem } from "../features/cart/cartSlice";
 
-const Cart = ({ cart, setCart }) => {
-  const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
-
-  const grandTotal = cart.reduce(
-    (total, item) =>
-      total +
-      Number(String(item.price).replace("₹", "")) * item.quantity,
+const Cart = () => {
+  // const cartCount = useSelector((state) => state.cart.items.length);
+  const cartCount = useSelector((state) =>
+  state.cart.items.reduce(
+    (sum, item) => sum + item.quantity,
     0
-  );
+  )
+);
+  const cart = useSelector((state) => state.cart.items);
+  const dispatch = useDispatch();
 
-  const removeItem = (id) => {
-    setCart((prev) =>
-      prev
-        .map((item) =>
-          item.id === id
-            ? { ...item, quantity: item.quantity - 1 }
-            : item
-        )
-        .filter((item) => item.quantity > 0)
-    );
-  };
+  const grandTotal = useSelector((state) => state.cart.totalAmount);
+    // const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  const increaseItem = (id) => {
-    setCart((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      )
-    );
-  };
+  // const removeItem = (id) => {
+  //   setCart((prev) =>
+  //     prev
+  //       .map((item) =>
+  //         item.id === id
+  //           ? { ...item, quantity: item.quantity - 1 }
+  //           : item
+  //       )
+  //       .filter((item) => item.quantity > 0)
+  //   );
+  // };
 
-  const clearItem = (id) => {
-    setCart((prev) => prev.filter((item) => item.id !== id));
-  };
+  // const increaseItem = (id) => {
+  //   setCart((prev) =>
+  //     prev.map((item) =>
+  //       item.id === id
+  //         ? { ...item, quantity: item.quantity + 1 }
+  //         : item
+  //     )
+  //   );
+  // };
+
+  // const clearItem = (id) => {
+  //   setCart((prev) => prev.filter((item) => item.id !== id));
+  // };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
@@ -116,21 +122,21 @@ const Cart = ({ cart, setCart }) => {
                     {/* Buttons */}
                     <div className="flex flex-wrap gap-3 justify-center">
                       <button
-                        onClick={() => removeItem(item.id)}
+                        onClick={() => dispatch(decreaseQuantity(item.id))}
                         className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
                       >
                         −
                       </button>
 
                       <button
-                        onClick={() => increaseItem(item.id)}
+                        onClick={() => dispatch(increaseQuantity(item.id))}
                         className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
                       >
                         +
                       </button>
 
                       <button
-                        onClick={() => clearItem(item.id)}
+                        onClick={() => dispatch(removeFromCart(item.id))}
                         className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded"
                       >
                         Remove
@@ -158,6 +164,7 @@ const Cart = ({ cart, setCart }) => {
                       {cartCount}
                     </span>
                   </p>
+                  
                 </div>
 
                 <button className="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-lg text-lg font-semibold transition">
