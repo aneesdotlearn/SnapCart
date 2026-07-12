@@ -2,11 +2,23 @@ import React, {useState} from 'react'
 import Navbar from './Navbar';
 import Banner from './Banner';
 import Footer from './Footer'
-import Cart from './Cart';
+// import Cart from './Cart';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart } from '../features/cart/cartSlice';
 
 
-const ProductPage = ({addToCart,cart}) => {
-    const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+const ProductPage = () => {
+    // const count = useSelector((state) => state.cart.items.length);
+    // const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+    // const cartCount = useSelector((state) => state.cart.items.length);
+    const cartCount = useSelector((state) =>
+  state.cart.items.reduce(
+    (sum, item) => sum + item.quantity,
+    0
+  )
+);
+    const dispatch = useDispatch();
+    const cart = useSelector((state) => state.cart.items);
     const products = [
   {
     id:1,
@@ -121,7 +133,7 @@ const ProductPage = ({addToCart,cart}) => {
                             {/* <p>{prod.category}</p> */}
                         </div>
 
-                        <button onClick={() => addToCart(prod)} className="bg-orange-400 text-purple px-4 py-2 rounded hover:bg-purple-600 transition-colors">Add to Cart</button>
+                        <button onClick={() => dispatch(addToCart(prod))} className="bg-orange-400 text-purple px-4 py-2 rounded hover:bg-purple-600 transition-colors">Add to Cart</button>
 
                     </div>
                     
@@ -135,4 +147,4 @@ const ProductPage = ({addToCart,cart}) => {
   );
 };
 
-export default ProductPage
+export default ProductPage;

@@ -11,20 +11,20 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 
 function App() {
-    const [cart, setCart] = useState([]);
-    const addToCart =  (product) => {
-        setCart((prevCart) => {
-          const existingItem = prevCart.find((item) => item.id === product.id); 
+    // const [cart, setCart] = useState([]);
+    // const addToCart =  (product) => {
+    //     setCart((prevCart) => {
+    //       const existingItem = prevCart.find((item) => item.id === product.id); 
 
-          if (existingItem) {
-            return prevCart.map((item) =>
-              item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-            );
-          } else {
-            return [...prevCart, { ...product, quantity: 1 }];
-          }
-        });
-    };
+    //       if (existingItem) {
+    //         return prevCart.map((item) =>
+    //           item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+    //         );
+    //       } else {
+    //         return [...prevCart, { ...product, quantity: 1 }];
+    //       }
+    //     });
+    // };
 
   return (
     <>
@@ -32,8 +32,8 @@ function App() {
       {/* <Navbar/> */}
       
       <Routes>
-        <Route path="/" element={<ProductPage addToCart={addToCart} cart={cart}/>} />
-        <Route path="/cart" element={<Cart cart={cart} setCart={setCart}/>} />
+        <Route path="/" element={<ProductPage/>} />
+        <Route path="/cart" element={<Cart/>} />
       </Routes>
       </Router>
     </>
