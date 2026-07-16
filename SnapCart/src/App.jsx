@@ -8,6 +8,7 @@ import ProductPage from './components/ProductPage'
 import Footer from './components/Footer'
 import Cart from './components/Cart'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import Favorites from './components/Favorites'
 
 
 function App() {
@@ -34,6 +35,8 @@ function App() {
       <Routes>
         <Route path="/" element={<ProductPage/>} />
         <Route path="/cart" element={<Cart/>} />
+        <Route path="/favorites" element={<Favorites/>} />
+        
       </Routes>
       </Router>
     </>
