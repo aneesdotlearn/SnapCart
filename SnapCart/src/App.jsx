@@ -5,12 +5,14 @@ import Cart from './components/Cart'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Favorites from './components/Favorites'
 import Checkout from './components/Checkout'
+import AdminProduct from './components/AdminProduct'
+import AdminRoute from './components/AdminRoute'
 // import AuthPage from './components/AuthPage'
 import SignIn from './components/login/SignIn'
 import SignUp from './components/login/SignUp'
 import { useDispatch } from 'react-redux'
 import axios from 'axios'
-import { loginSuccess } from "./features/user/userSlice";
+import { loginSuccess, logout } from "./features/user/userSlice";
 import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
@@ -34,7 +36,7 @@ function App() {
         }
       } catch (error) {
         console.error("Error fetching user profile:", error);
-        localStorage.removeItem("token");
+        dispatch(logout());
       }
     };
 
@@ -67,11 +69,15 @@ function App() {
           <Route path="/checkout" element={<Checkout/>} />
           <Route path="/favorites" element={<Favorites/>} />
         </Route>
+        <Route element={<AdminRoute />}>
+          <Route path="/admin/products" element={<AdminProduct/>} />
+        </Route>
         
           <Route path="/cart" element={<Cart/>} />
         {/* <Route path="/login" element={<AuthPage mode="login" />} />
         <Route path="/signup" element={<AuthPage mode="signup" />} /> */}
         <Route path='/login' element={<SignIn/>} />
+        <Route path='/signin' element={<SignIn/>} />
         <Route path='/signup' element={<SignUp/>} />
         
       </Routes>

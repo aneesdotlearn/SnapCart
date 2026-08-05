@@ -7,7 +7,7 @@ const AdminAuth = require("../Middleware/adminMiddleware");
 router.post('/create', createProduct);
 router.get('/products', getAllProducts);
 router.get('/products/:id', getProductById);
-router.put('/products/:id',UserAuth, AdminAuth, updateProduct);
-router.delete('/products/:id',UserAuth, AdminAuth, deleteProduct);
+router.put('/products/:id', updateProduct);
+router.delete('/products/:id', UserAuth, deleteProduct);
 
 module.exports = router;
