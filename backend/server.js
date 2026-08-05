@@ -3,13 +3,14 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const connectToDB = require("./Config/db");
 const ProductRoutes = require("./Routes/ProductRoutes");
-
+const userRoutes = require("./Routes/UserRoute");
 
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use("/", ProductRoutes);
+app.use("/users/", userRoutes);
 
 connectToDB();
 app.get("/", (req, res) => {

@@ -7,6 +7,8 @@ import { FaRegHeart } from "react-icons/fa";
 import { FiUser } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import { FiSearch } from "react-icons/fi";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from '../features/user/userSlice';
 
 const placeholders = [
   'Search "Milk"',
@@ -22,18 +24,28 @@ const Navbar = ({cartCount, openCart}) => {
 
     const [placeholder, setPlaceholder] = useState(placeholders[0]);
 
-  useEffect(() => {
-    let index = 0;
+      useEffect(() => {
+        let index = 0;
 
-    const interval = setInterval(() => {
-      index = (index + 1) % placeholders.length;
-      setPlaceholder(placeholders[index]);
-    }, 2000); // Changes every 2 seconds
+        const interval = setInterval(() => {
+          index = (index + 1) % placeholders.length;
+          setPlaceholder(placeholders[index]);
+        }, 2000); // Changes every 2 seconds
 
-    return () => clearInterval(interval);
-  }, []);
+        return () => clearInterval(interval);
+      }, []);
   
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+    const { user } = useSelector((state) => state.user);
+  useEffect(() => {
+  console.log("User changed:", user);
+}, [user]);
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  }
+
   return (
     <nav className="bg-orange-400 text-white py-6">
     <div className="flex justify-between items-center px-4">
@@ -50,10 +62,15 @@ const Navbar = ({cartCount, openCart}) => {
       
       <div className=' flex  gap-2'>
         
-      <button className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-orange-400 hover:text-white transition">
+      {user?
+      (<button onClick={() => navigate("/")} className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-orange-400 hover:text-white transition">
+        <FiUser size={18} />
+        {user.name}
+      </button>):(<button onClick={() => navigate("/login")} className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-orange-400 hover:text-white transition">
         <FiUser size={18} />
         Login
-      </button>
+      </button>)}
+      
 
         {/* <div className='text-center'>
         <button onClick={() => navigate('/favorites')} className = "bg-gray-100 text-purple-800 font-semibold py-1 px-2 rounded-3xl">🧡</button>
@@ -72,6 +89,11 @@ const Navbar = ({cartCount, openCart}) => {
       </div>
 
       <button onClick={openCart} className = "bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-orange-400 hover:text-white transition"><FaShoppingCart />Cart : {cartCount || 0}</button>
+
+      <button onClick={handleLogout} className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-orange-400 hover:text-white transition">
+        <FiUser size={18} />
+        Logout
+      </button>
       </div>
     </div>
     </nav>

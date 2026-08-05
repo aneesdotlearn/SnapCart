@@ -23,6 +23,11 @@ const ProductPage = () => {
       )
     );
     const dispatch = useDispatch();
+
+      // const [products, setProducts] = useState([]);
+      // const productImage = "https://stock.adobe.com/search?k=end+of+year+sale+banners"
+
+
     const cart = useSelector((state) => state.cart.items);
     const favorites = useSelector((state) => state.favorite.favorites);
     const products = [
@@ -112,6 +117,25 @@ const ProductPage = () => {
     image:"https://cdn.zeptonow.com/production/ik-seo/tr:w-403,ar-1200-1200,pr-true,f-auto,q-40,dpr-2/cms/product_variant/b4907b1b-45a2-47e8-9668-2ead04b52ee0/Surf-Excel-Matic-Top-Load-Detergent-Liquid-Pouch.jpg"
   },
 ];
+
+
+
+
+  // useEffect(()=>{
+  //   console.log("Fetching products from backend...");
+  //   const fetchProducts = async () => {
+  //     try{
+  //       console.log("Fetching products...");
+  //       const resp = await axios.get("http://localhost:3000/products");
+  //       console.log("Products: ", resp);
+  //       setProducts(resp.data.products);
+  //     }catch(err){
+  //       console.log(err)
+  //     }
+  //   }
+  //   // call the loader
+  //   fetchProducts();
+  // },[])
 
 // const addToCart =  (product) => {
 //     setCart((prevCart) => [...prevCart, product]);
