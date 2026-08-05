@@ -3,23 +3,30 @@ import Navbar from './Navbar';
 import Banner from './Banner';
 import Footer from './Footer'
 // import Cart from './Cart';
+import CartSidebar from './CartSidebar';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../features/cart/cartSlice';
+import { FaHeart } from "react-icons/fa";
+import { FaRegHeart } from "react-icons/fa";
+import { toggleFavorite } from '../features/cart/favoriteSlice';
 
 
 const ProductPage = () => {
+  const [isCartOpen, setIsCartOpen] = useState(false);
     // const count = useSelector((state) => state.cart.items.length);
     // const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
     // const cartCount = useSelector((state) => state.cart.items.length);
     const cartCount = useSelector((state) =>
-  state.cart.items.reduce(
-    (sum, item) => sum + item.quantity,
-    0
-  )
-);
+      state.cart.items.reduce(
+        (sum, item) => sum + item.quantity,
+        0
+      )
+    );
     const dispatch = useDispatch();
     const cart = useSelector((state) => state.cart.items);
+    const favorites = useSelector((state) => state.favorite.favorites);
     const products = [
+      
   {
     id:1,
     name:"Fresh Apple - 1kg",
@@ -113,12 +120,18 @@ const ProductPage = () => {
 
   return (
     <div>
-    <Navbar cartCount={cartCount}/>
+      
+    <Navbar cartCount={cartCount} openCart={() => setIsCartOpen(true)}/>
+    <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)}/>
     <Banner/>
     <section className="bg-gray-100 px-3 py-5 min-h-screen">
         <h1 className="text-3xl font-bold text-center mb-4">Our Featured Products</h1> 
         <div className="grid grid-cols-6 gap-4">
             {products.map((prod) => {
+              
+              const isFavorite = favorites.some(
+                (item) => item.id === prod.id
+              );
                 return (
                     <div 
                         key={prod.id}
@@ -126,14 +139,29 @@ const ProductPage = () => {
                         transition duration-300">
 
                         <img src={prod.image} alt={prod.name}
-                        className="h-[200px]"/>
+                        className="h-[120px]"/>
                         <div className="flex flex-col items-center gap-2">
-                            <h2 className="text-purple-900">{prod.name}</h2>
-                            <div className='flex flex-row gap-2'><p className='font-bold'>₹{prod.price}</p><del>₹{prod.price}</del></div>
+                            <h2 className="text-purple-900 min-h-[60px] line-clamp-2">{prod.name}</h2>
+                            <div className='flex flex-row gap-2'><p className='font-bold'>₹{prod.price}</p><del>₹{(prod.price * 1.2).toFixed(2)}</del></div>
                             {/* <p>{prod.category}</p> */}
                         </div>
 
-                        <button onClick={() => dispatch(addToCart(prod))} className="bg-orange-400 text-purple px-4 py-2 rounded hover:bg-purple-600 transition-colors">Add to Cart</button>
+                        <div className='flex justify-between gap-3 pb-2'>
+
+                        <button onClick={() => dispatch(addToCart(prod))} className="px-4 py-1 border-2 border-orange-500 rounded-xl bg-white text-orange-500 font-bold text-sm shadow-md hover:bg-orange-500 hover:text-white transition-all duration-200 shadow-[0_4px_8px_rgba(249,115,22,0.25)]">
+                            Add to Cart
+                        </button>
+                        
+                        <button onClick={() => dispatch(toggleFavorite(prod))}>
+                          {isFavorite ? (
+                            <FaHeart className="text-orange-500 text-xl" />
+                          ) : (
+                            <FaRegHeart className="text-xl text-orange-500" />
+                          )}
+                        </button>
+                        </div>
+                                
+                            
 
                     </div>
                     
@@ -143,6 +171,7 @@ const ProductPage = () => {
         </div>
     </section>
     <Footer/>
+    
     </div>
   );
 };
