@@ -24,7 +24,6 @@ const fieldBase =
   "flex items-center gap-3 rounded-lg border border-orange-100 bg-white/90 px-4 py-3 text-purple-950 shadow-sm";
 
 const SignIn = () => {
-  const mode = 'login';
   const isSignup = false;
   const navigate = useNavigate();
   const location = useLocation();
@@ -84,7 +83,13 @@ const SignIn = () => {
           }),
         );
       }
-      navigate(returnTo, { replace: true });
+
+      const isAdmin = res.data.user?.role === "admin";
+      const nextPath = isAdmin
+        ? returnTo.startsWith("/admin") ? returnTo : "/admin/products"
+        : returnTo.startsWith("/admin") ? "/" : returnTo;
+
+      navigate(nextPath, { replace: true });
     } catch(err) {
       console.log(err);
     }
