@@ -1,0 +1,118 @@
+import React from 'react';
+import search from "../assets/bg-img/search.svg";
+import { useNavigate } from 'react-router-dom';
+import { FaShoppingCart } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa";
+import { FaRegHeart } from "react-icons/fa";
+import { FiUser } from "react-icons/fi";
+import { useState, useEffect } from "react";
+import { FiSearch } from "react-icons/fi";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from '../features/user/userSlice';
+
+// const placeholders = [
+//   'Search "Milk"',
+//   'Search "Apple"',
+//   'Search "Chips"',
+//   'Search "Chocolate"',
+//   'Search "Cold Drinks"',
+//   'Search "Rice"',
+// ];
+
+const AdminNavbar = ({ cartCount, openCart }) => {
+  //   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  //     const [placeholder, setPlaceholder] = useState(placeholders[0]);
+
+  //       useEffect(() => {
+  //         let index = 0;
+
+  //         const interval = setInterval(() => {
+  //           index = (index + 1) % placeholders.length;
+  //           setPlaceholder(placeholders[index]);
+  //         }, 2000); // Changes every 2 seconds
+
+  //         return () => clearInterval(interval);
+  //       }, []);
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.user);
+  useEffect(() => {
+    console.log("User changed:", user);
+  }, [user]);
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  }
+
+  return (
+    <nav className="bg-orange-400 text-white py-6">
+      <div className="flex justify-between items-center px-4">
+        <div className="flex items-center gap-8">
+          <h1 className="font-bold text-4xl cursor-pointer" onClick={() => navigate("/admin/products")}>SnapCart</h1>
+          <div className="flex gap-6">
+            <button
+              onClick={() => navigate("/admin/products")}
+              className="text-lg font-bold hover:text-purple-900 transition underline-offset-4 hover:underline"
+            >
+              Products
+            </button>
+            <button
+              onClick={() => navigate("/admin/orders")}
+              className="text-lg font-bold hover:text-purple-900 transition underline-offset-4 hover:underline"
+            >
+              Orders
+            </button>
+          </div>
+        </div>
+        {/* <div className="flex items-center bg-gray-100 rounded-lg px-3 py-2 w-[500px] gap-2">
+      <FiSearch className="text-purple-800 text-xl font-bold" />
+      <input
+        type="text"
+        placeholder={placeholder}
+        className="bg-transparent outline-none flex-1 px-2 text-purple-900"
+      />
+    </div> */}
+
+        <div className=' flex  gap-2'>
+
+          {user ?
+            (<button onClick={() => navigate("/")} className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-orange-400 hover:text-white transition">
+              <FiUser size={18} />
+              {user.name}
+            </button>) : (<button onClick={() => navigate("/login")} className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-orange-400 hover:text-white transition">
+              <FiUser size={18} />
+              Login
+            </button>)}
+
+
+          {/* <div className='text-center'>
+        <button onClick={() => navigate('/favorites')} className = "bg-gray-100 text-purple-800 font-semibold py-1 px-2 rounded-3xl">🧡</button>
+        <p className='text-gray font-light text-xs'>Favorites</p>
+        </div> */}
+
+          {/* <div className="text-center">
+        <button
+          onClick={() => navigate("/favorites")}
+          className="bg-gray-100 text-purple-800 p-3 rounded-full hover:bg-orange-400 hover:text-white transition"
+        >
+          <FaRegHeart size={20} />
+        </button>
+
+        
+      </div>
+
+      <button onClick={openCart} className = "bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-orange-400 hover:text-white transition"><FaShoppingCart />Cart : {cartCount || 0}</button> */}
+
+          <button onClick={handleLogout} className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-orange-400 hover:text-white transition">
+            <FiUser size={18} />
+            Logout
+          </button>
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+export default AdminNavbar;

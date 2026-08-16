@@ -5,9 +5,9 @@ const UserAuth = require("../Middleware/authMiddleware");
 const AdminAuth = require("../Middleware/adminMiddleware");
 
 router.post('/create', createProduct);
-router.get('/products', getAllProducts);
-router.get('/products/:id', getProductById);
-router.put('/products/:id', updateProduct);
+router.get('/products', UserAuth, getAllProducts);
+router.get('/products/:id', UserAuth, getProductById);
+router.put('/products/:id', UserAuth, updateProduct);
 router.delete('/products/:id', UserAuth, deleteProduct);
 
 module.exports = router;

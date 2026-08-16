@@ -49,7 +49,25 @@ const Navbar = ({cartCount, openCart}) => {
   return (
     <nav className="bg-orange-400 text-white py-6">
     <div className="flex justify-between items-center px-4">
-      <h1 className="font-bold text-4xl">SnapCart</h1>
+      <div className="flex items-center gap-8">
+        <h1 className="font-bold text-4xl cursor-pointer" onClick={() => navigate("/")}>SnapCart</h1>
+        <div className="flex gap-6">
+          <button 
+            onClick={() => navigate("/")} 
+            className="text-lg font-bold hover:text-purple-900 transition underline-offset-4 hover:underline"
+          >
+            Home
+          </button>
+          {user && (
+            <button 
+              onClick={() => navigate("/orders")} 
+              className="text-lg font-bold hover:text-purple-900 transition underline-offset-4 hover:underline"
+            >
+              My Orders
+            </button>
+          )}
+        </div>
+      </div>
       <div className="flex items-center bg-gray-100 rounded-lg px-3 py-2 w-[500px] gap-2">
       <FiSearch className="text-purple-800 text-xl font-bold" />
 

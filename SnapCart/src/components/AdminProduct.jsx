@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Footer from "./Footer";
-import Navbar from "./Navbar";
+// import Navbar from "./Navbar";
+import AdminNavbar from "./AdminNavbar";
 
 const emptyForm = {
   id: "",
@@ -116,7 +117,7 @@ const AdminProduct = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar />
+      <AdminNavbar/>
 
       <main className="mx-auto max-w-6xl px-4 py-6">
         <div className="mb-6">
