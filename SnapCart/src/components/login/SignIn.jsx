@@ -16,6 +16,7 @@ import {
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../../features/user/userSlice";
+import { GoogleLogin } from "@react-oauth/google";
 // import heroImg from "../assets/hero.png";
 // import banner1 from "../assets/bg-img/banner1.png";
 // import banner2 from "../assets/bg-img/banner2.png";
@@ -60,6 +61,33 @@ const SignIn = () => {
     }),
     [isSignup]
   );
+
+  const handleGoogleLogin = async (credentialResponse) => {
+    try {
+        const response = await axios.post(
+            "http://localhost:3000/users/google-login",
+            {
+                credential: credentialResponse.credential,
+            }
+        );
+
+        if (response.data.success) {
+            dispatch(
+                loginSuccess({
+                    user: response.data.user,
+                    token: response.data.token,
+                })
+            );
+
+            navigate(returnTo, { replace: true });
+        }
+    } catch (error) {
+        console.error(
+            "Google login failed:",
+            error.response?.data || error.message
+        );
+    }
+};
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -300,6 +328,23 @@ const SignIn = () => {
                   {page.action}
                   <FiArrowRight />
                 </button>
+
+                <div className="my-5 flex items-center gap-3">
+                    <div className="h-px flex-1 bg-gray-200" />
+                    <span className="text-sm font-semibold text-gray-400">
+                        OR
+                    </span>
+                    <div className="h-px flex-1 bg-gray-200" />
+                </div>
+
+                <div className="flex justify-center flex w-full items-center justify-center gap-3 rounded-lg px-5 py-4 text-lg font-black">
+                    <GoogleLogin
+                        onSuccess={handleGoogleLogin}
+                        onError={() => {
+                            console.log("Google Login Failed");
+                        }}
+                    />
+                </div>
               </form>
 
               {submitted && (
