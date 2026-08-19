@@ -106,7 +106,7 @@ const Checkout = () => {
         };
 
         const response = await axios.post(
-          "http://localhost:3000/orders",
+          `${import.meta.env.VITE_BACKEND_URL}/orders`,
           orderData
         );
 

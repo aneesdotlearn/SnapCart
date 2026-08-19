@@ -46,9 +46,9 @@ const AdminOrders = () => {
       const headers = { Authorization: `Bearer ${token}` };
 
       const [ordersRes, usersRes, productsRes] = await Promise.all([
-        axios.get("http://localhost:3000/orders", { headers }),
-        axios.get("http://localhost:3000/users", { headers }),
-        axios.get("http://localhost:3000/products", { headers }),
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}/orders`, { headers }),
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}/users`, { headers }),
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}/products`, { headers }),
       ]);
 
       setOrders(ordersRes.data.data || []);
@@ -78,7 +78,7 @@ const AdminOrders = () => {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:3000/orders/${orderId}`, {
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/orders/${orderId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMessage("Order deleted successfully");
@@ -157,7 +157,7 @@ const AdminOrders = () => {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.post("http://localhost:3000/orders", payload, {
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/orders`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMessage("Order created successfully");
@@ -216,7 +216,7 @@ const AdminOrders = () => {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.put(`http://localhost:3000/orders/${selectedOrder._id}`, payload, {
+      await axios.put(`${import.meta.env.VITE_BACKEND_URL}/orders/${selectedOrder._id}`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMessage("Order updated successfully");
@@ -233,7 +233,7 @@ const AdminOrders = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:3000/orders/${orderId}`,
+        `${import.meta.env.VITE_BACKEND_URL}/orders/${orderId}`,
         { orderStatus: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -249,7 +249,7 @@ const AdminOrders = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:3000/orders/${orderId}`,
+        `${import.meta.env.VITE_BACKEND_URL}/orders/${orderId}`,
         { paymentStatus: newPaymentStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );

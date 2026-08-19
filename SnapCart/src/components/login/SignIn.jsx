@@ -65,7 +65,7 @@ const SignIn = () => {
   const handleGoogleLogin = async (credentialResponse) => {
     try {
         const response = await axios.post(
-            "http://localhost:3000/users/google-login",
+            `${import.meta.env.VITE_BACKEND_URL}/users/google-login`,
             {
                 credential: credentialResponse.credential,
             }
@@ -92,7 +92,7 @@ const SignIn = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const res =await axios.post("http://localhost:3000/users/login",{
+      const res =await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/login`,{
         email,
         password
       });

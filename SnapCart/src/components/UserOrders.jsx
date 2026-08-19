@@ -17,7 +17,7 @@ const UserOrders = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`http://localhost:3000/orders/user/${user._id}`, {
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/orders/user/${user._id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setOrders(res.data.data || []);
@@ -46,7 +46,7 @@ const UserOrders = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:3000/orders/${orderId}`,
+        `${import.meta.env.VITE_BACKEND_URL}/orders/${orderId}`,
         { orderStatus: "Cancelled" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
