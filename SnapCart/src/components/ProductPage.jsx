@@ -128,7 +128,7 @@ const ProductPage = () => {
     const fetchProducts = async () => {
       try{
         console.log("Fetching products...");
-        const resp = await axios.get("http://localhost:3000/products");
+        const resp = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/products`);
         console.log("Response:", resp.data);
         console.log("Products:", resp.data.data);
 

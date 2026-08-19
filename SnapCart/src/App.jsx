@@ -27,7 +27,7 @@ function App() {
       }
 
       try {
-        const res = await axios.get("http://localhost:3000/users/me", {
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/me`, {
           headers: {
             Authorization: `Bearer ${token}`
           }

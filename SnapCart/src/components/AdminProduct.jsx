@@ -21,7 +21,7 @@ const AdminProduct = () => {
 
   const fetchProducts = async () => {
     try {
-      const resp = await axios.get("http://localhost:3000/products");
+      const resp = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/products`);
       setProducts(resp.data.data || resp.data.products || []);
     } catch (err) {
       console.log(err);
@@ -65,12 +65,12 @@ const AdminProduct = () => {
 
     try {
       if (editId) {
-        await axios.put(`http://localhost:3000/products/${editId}`, getPayload(), {
+        await axios.put(`${import.meta.env.VITE_BACKEND_URL}/products/${editId}`, getPayload(), {
           headers: getAuthHeaders(),
         });
         setMessage("Product updated successfully");
       } else {
-        await axios.post("http://localhost:3000/create", getPayload(), {
+        await axios.post(`${import.meta.env.VITE_BACKEND_URL}/create`, getPayload(), {
           headers: getAuthHeaders(),
         });
         setMessage("Product created successfully");
@@ -104,7 +104,7 @@ const AdminProduct = () => {
     }
 
     try {
-      await axios.delete(`http://localhost:3000/products/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/products/${id}`, {
         headers: getAuthHeaders(),
       });
       setMessage("Product deleted successfully");
