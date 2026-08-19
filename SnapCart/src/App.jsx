@@ -7,7 +7,8 @@ import Favorites from './components/Favorites'
 import Checkout from './components/Checkout'
 import AdminProduct from './components/AdminProduct'
 import AdminRoute from './components/AdminRoute'
-// import AuthPage from './components/AuthPage'
+import AdminOrders from './components/AdminOrders'
+import UserOrders from './components/UserOrders'
 import SignIn from './components/login/SignIn'
 import SignUp from './components/login/SignUp'
 import { useDispatch } from 'react-redux'
@@ -43,44 +44,26 @@ function App() {
     fetchUserProfile();
   }, [dispatch]);
 
-  // const [cart, setCart] = useState([]);
-  // const addToCart =  (product) => {
-  //     setCart((prevCart) => {
-  //       const existingItem = prevCart.find((item) => item.id === product.id);
-
-    //       if (existingItem) {
-    //         return prevCart.map((item) =>
-    //           item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-    //         );
-    //       } else {
-    //         return [...prevCart, { ...product, quantity: 1 }];
-    //       }
-    //     });
-    // };
-
   return (
     <>
       <Router>
-      {/* <Navbar/> */}
-      
-      <Routes>
-        <Route path="/" element={<ProductPage/>} />
-        <Route element={<ProtectedRoute />}>
-          <Route path="/checkout" element={<Checkout/>} />
-          <Route path="/favorites" element={<Favorites/>} />
-        </Route>
-        <Route element={<AdminRoute />}>
-          <Route path="/admin/products" element={<AdminProduct/>} />
-        </Route>
-        
+        <Routes>
+          <Route path="/" element={<ProductPage/>} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/checkout" element={<Checkout/>} />
+            <Route path="/favorites" element={<Favorites/>} />
+            <Route path="/orders" element={<UserOrders />} />
+          </Route>
+          <Route element={<AdminRoute />}>
+            <Route path="/admin/products" element={<AdminProduct/>} />
+            <Route path="/admin/orders" element={<AdminOrders />} />
+          </Route>
+          
           <Route path="/cart" element={<Cart/>} />
-        {/* <Route path="/login" element={<AuthPage mode="login" />} />
-        <Route path="/signup" element={<AuthPage mode="signup" />} /> */}
-        <Route path='/login' element={<SignIn/>} />
-        <Route path='/signin' element={<SignIn/>} />
-        <Route path='/signup' element={<SignUp/>} />
-        
-      </Routes>
+          <Route path='/login' element={<SignIn/>} />
+          <Route path='/signin' element={<SignIn/>} />
+          <Route path='/signup' element={<SignUp/>} />
+        </Routes>
       </Router>
     </>
   )

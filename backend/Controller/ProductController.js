@@ -1,4 +1,5 @@
 const Product = require('../Model/ProductModel');
+const { redisClient } = require('../Config/redis');
 
 const createProduct = async (req, res) => {
     try {
@@ -19,11 +20,23 @@ const createProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
     try {
+        const cachedProducts = await redisClient.get('products');
+        if (cachedProducts) {
+            return res.status(200).json({
+                success: true,
+                message: 'Products fetched from cache',
+                data: JSON.parse(cachedProducts),
+                source: 'Redis cache'
+            });
+        }
+
         const products = await Product.find();
+        await redisClient.setEx('products', 3600, JSON.stringify(products)); // Cache for 1 hour
         res.status(200).json({
             success: true,
             message: 'Products fetched successfully',
-            data: products
+            data: products,
+            source: 'MongoDB'
         });
 
     }catch (error) {
@@ -37,7 +50,17 @@ const getAllProducts = async (req, res) => {
 
 const getProductById = async (req, res) => {
   try {
+    const cachedProduct = await redisClient.get(`product:${req.params.id}`);
+    if (cachedProduct) {
+      return res.status(200).json({
+        success: true,
+        message: "Product fetched from cache",
+        data: JSON.parse(cachedProduct),
+        source: "Redis cache"
+      });
+    }
     const product = await Product.findOne({ id: req.params.id }); // params = parameter in the URL
+    await redisClient.setEx(`product:${req.params.id}`, 3600, JSON.stringify(product)); // Cache for 1 hour
     if (!product) {
       return res.status(404).json({
         success: false,
@@ -48,7 +71,8 @@ const getProductById = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Product fetched successfully",
-      product,
+      data: product,
+      source: "MongoDB"
     });
   } catch (error) {
     res.status(500).json({
@@ -73,7 +97,8 @@ const updateProduct = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Product updated successfully",
-      product,
+      data: product,
+      source: "MongoDB"
     });
   } catch (error) {
     res.status(500).json({
@@ -97,7 +122,8 @@ const deleteProduct = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Product deleted successfully",
-      product,
+      data: product,
+      source: "MongoDB"
     });
   } catch (error) {
     res.status(500).json({

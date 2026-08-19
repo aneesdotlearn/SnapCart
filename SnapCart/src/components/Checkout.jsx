@@ -24,6 +24,7 @@ import {
   getGrandTotal,
   HANDLING_CHARGE,
 } from "../utils/cartTotals";
+import axios from "axios";
 
 const fieldClass =
   "mt-2 w-full rounded-lg border border-orange-100 bg-white px-4 py-3 text-purple-950 outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-100";
@@ -44,6 +45,8 @@ const Checkout = () => {
   const cartCount = getCartCount(cart);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  
+  const { user } = useSelector((state) => state.user);
 
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [placedOrder, setPlacedOrder] = useState(null);
@@ -67,25 +70,66 @@ const Checkout = () => {
     }));
   };
 
-  const handlePlaceOrder = (event) => {
-    event.preventDefault();
+    const handlePlaceOrder = async (event) => {
+      event.preventDefault();
 
-    if (!cart.length) {
-      navigate("/");
-      return;
-    }
+      if (!cart.length) {
+        navigate("/");
+        return;
+      }
 
-    const orderItems = cart.map((item) => ({ ...item }));
-    setPlacedOrder({
-      id: `SC${Date.now().toString().slice(-6)}`,
-      customer: { ...formData },
-      items: orderItems,
-      summary: buildSummary(orderItems),
-    });
+      try {
+        const orderData = {
+          user: user._id, // Replace with logged-in user's id
 
-    dispatch(clearCart());
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+          items: cart.map((item) => ({
+            productId: item._id,
+            name: item.name,
+            image: item.image,
+            price: item.price,
+            quantity: item.quantity,
+          })),
+
+          orderSummary: {
+            subtotal: summary.subtotal,
+            deliveryCharge: summary.deliveryCharge,
+            handlingCharge: summary.handlingCharge,
+            grandTotal: summary.grandTotal,
+          },
+
+          paymentMethod:
+            formData.payment === "cash"
+              ? "COD"
+              : "Card",
+
+          paymentStatus: "Pending",
+        };
+
+        const response = await axios.post(
+          "http://localhost:3000/orders",
+          orderData
+        );
+
+        console.log(response.data);
+
+        setPlacedOrder({
+          ...response.data.data,
+          customer: formData,
+          summary,
+        });
+
+        dispatch(clearCart());
+
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+
+      } catch (error) {
+        console.log(error);
+        alert("Failed to place order");
+      }
+    };
 
   const renderSummary = (items, orderSummary) => (
     <aside className="rounded-lg border border-orange-100 bg-white p-5 shadow-sm">
