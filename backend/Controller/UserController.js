@@ -3,6 +3,112 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 
+const { OAuth2Client } = require("google-auth-library");
+const googleClient = new OAuth2Client(
+    process.env.VITE_GOOGLE_CLIENT_ID
+);
+
+
+const googleLogin = async (req, res) => {
+    try {
+        const { credential } = req.body;
+
+        if (!credential) {
+            return res.status(400).json({
+                success: false,
+                message: "Google credential is required",
+            });
+        }
+
+        const ticket = await googleClient.verifyIdToken({
+            idToken: credential,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+
+        const payload = ticket.getPayload();
+
+        const {
+            sub: googleId,
+            name,
+            email,
+            picture,
+            email_verified,
+        } = payload;
+
+        if (!email || !email_verified) {
+            return res.status(400).json({
+                success: false,
+                message: "Google email could not be verified",
+            });
+        }
+
+        let user = await UserModel.findOne({
+            $or: [
+                { googleId },
+                { email }
+            ],
+        });
+
+        // Existing user
+        if (user) {
+
+            // Link Google account if this email already
+            // belongs to a normal SnapCart account
+            if (!user.googleId) {
+                user.googleId = googleId;
+            }
+
+            if (user.authProvider !== "google") {
+                user.authProvider = "google";
+            }
+
+            await user.save();
+        }
+
+        // New Google user
+        if (!user) {
+            user = await UserModel.create({
+                name,
+                email,
+                googleId,
+                authProvider: "google",
+                role: "user",
+            });
+        }
+
+        const token = jwt.sign(
+            { id: user._id },
+            "secret_key",
+            {
+                expiresIn: "8h",
+            }
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: "Google login successful",
+            token,
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                googleId: user.googleId,
+                authProvider: user.authProvider,
+            },
+        });
+
+    } catch (error) {
+        console.error("Google login error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Google authentication failed",
+            error: error.message,
+        });
+    }
+};
+
 const registerUser = async (req, res) => {
     try {
         const { name, email, password, role } = req.body;// Destructure the request body to get user details
@@ -233,4 +339,4 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, updateUser, deleteUser, getUserById, getMe, getAllUsers };
+module.exports = { registerUser, loginUser, updateUser, deleteUser, getUserById, getMe, getAllUsers, googleLogin };
