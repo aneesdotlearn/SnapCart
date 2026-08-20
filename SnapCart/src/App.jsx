@@ -11,6 +11,7 @@ import AdminOrders from './components/AdminOrders'
 import UserOrders from './components/UserOrders'
 import SignIn from './components/login/SignIn'
 import SignUp from './components/login/SignUp'
+import Profile from './components/Profile'
 import { useDispatch } from 'react-redux'
 import axios from 'axios'
 import { loginSuccess, logout } from "./features/user/userSlice";
@@ -53,6 +54,7 @@ function App() {
             <Route path="/checkout" element={<Checkout/>} />
             <Route path="/favorites" element={<Favorites/>} />
             <Route path="/orders" element={<UserOrders />} />
+            <Route path="/profile" element={<Profile />} />
           </Route>
           <Route element={<AdminRoute />}>
             <Route path="/admin/products" element={<AdminProduct/>} />

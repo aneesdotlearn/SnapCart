@@ -26,6 +26,7 @@ import {
   getCartTotal,
   getDeliveryCharge,
   getGrandTotal,
+  getItemIdentity,
   HANDLING_CHARGE,
 } from "../utils/cartTotals";
 
@@ -136,7 +137,7 @@ const Checkout = () => {
         user: user._id,
 
         items: cart.map((item) => ({
-          productId: item._id,
+          productId: getItemIdentity(item),
           name: item.name,
           image: item.image,
           price: item.price,
@@ -252,16 +253,17 @@ const Checkout = () => {
         {items.map((item, index) => (
           <div
             key={
-              item.id ||
-              item._id ||
-              item.productId ||
-              index
+              getItemIdentity(item) ||
+              `${item.name}-${index}`
             }
             className="flex gap-3 border-b border-gray-100 pb-4"
           >
             <img
               src={item.image}
               alt={item.name}
+              onError={(event) => {
+                event.currentTarget.src = "/favicon.svg";
+              }}
               className="h-14 w-14 flex-none object-contain"
             />
 
@@ -394,9 +396,8 @@ if (placedOrder) {
                     {placedOrder.items?.map((item, index) => (
                       <div
                         key={
-                          item.productId ||
-                          item._id ||
-                          index
+                          getItemIdentity(item) ||
+                          `${item.name}-${index}`
                         }
                         className="flex justify-between gap-2"
                       >
