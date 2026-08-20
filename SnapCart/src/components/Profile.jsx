@@ -137,7 +137,7 @@ const Profile = () => {
           </div>
         </section>
 
-        <section className="mb-6 grid gap-4 md:grid-cols-3">
+        <section className="mb-6 grid gap-4 grid-cols-3">
           {profileStats.map((stat) => (
             <button
               key={stat.label}
@@ -199,7 +199,7 @@ const Profile = () => {
               </button>
             </div>
 
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            <div className="mt-5 grid gap-3 grid-cols-3 sm:grid-cols-2">
               <button
                 type="button"
                 onClick={() => navigate("/favorites")}

@@ -38,7 +38,7 @@ const SignIn = () => {
 
   const [submitted, setSubmitted] = useState(false);
 
-    // 1. Create a state variable for each input field
+  // 1. Create a state variable for each input field
   // 2. Use that state variable as the value of the input field
   // 3. Create a handleSubmit function for that form
   // 4. Make axios post request to the backend with the input field values
@@ -64,43 +64,43 @@ const SignIn = () => {
 
   const handleGoogleLogin = async (credentialResponse) => {
     try {
-        const response = await axios.post(
-            `${import.meta.env.VITE_BACKEND_URL}/users/google-login`,
-            {
-                credential: credentialResponse.credential,
-            }
-        );
-
-        if (response.data.success) {
-            dispatch(
-                loginSuccess({
-                    user: response.data.user,
-                    token: response.data.token,
-                })
-            );
-
-            navigate(returnTo, { replace: true });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/users/google-login`,
+        {
+          credential: credentialResponse.credential,
         }
-    } catch (error) {
-        console.error(
-            "Google login failed:",
-            error.response?.data || error.message
+      );
+
+      if (response.data.success) {
+        dispatch(
+          loginSuccess({
+            user: response.data.user,
+            token: response.data.token,
+          })
         );
+
+        navigate(returnTo, { replace: true });
+      }
+    } catch (error) {
+      console.error(
+        "Google login failed:",
+        error.response?.data || error.message
+      );
     }
-};
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const res =await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/login`,{
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/login`, {
         email,
         password
       });
       console.log("Response:", res.data.token);
-      console.log("Response:",res.data.user);
+      console.log("Response:", res.data.user);
       console.log(res.data);
       if (res.data.success) {
-          setSubmitted(true);
+        setSubmitted(true);
       }
 
       if (res.data.token) {
@@ -118,19 +118,19 @@ const SignIn = () => {
         : returnTo.startsWith("/admin") ? "/" : returnTo;
 
       navigate(nextPath, { replace: true });
-    } catch(err) {
+    } catch (err) {
       console.log(err);
     }
   };
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-orange-50 text-purple-950">
-      
+
       <div
-        // className="absolute inset-0 opacity-45"
-        // style={{
-        //   backgroundImage: `linear-gradient(110deg, rgba(255,247,237,.92), rgba(255,255,255,.76), rgba(88,28,135,.2)), url(${page.image})`,
-        // }}
+      // className="absolute inset-0 opacity-45"
+      // style={{
+      //   backgroundImage: `linear-gradient(110deg, rgba(255,247,237,.92), rgba(255,255,255,.76), rgba(88,28,135,.2)), url(${page.image})`,
+      // }}
       />
       <div className="absolute inset-0" />
       <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,.9)_0%,rgba(255,247,237,.8)_42%,rgba(88,28,135,.16)_100%)]" />
@@ -267,7 +267,7 @@ const SignIn = () => {
                       placeholder="you@example.com"
                       className="w-full bg-transparent text-base outline-none placeholder:text-gray-400"
                       value={email}
-                      onChange={(event)=> setEmail(event.target.value)}
+                      onChange={(event) => setEmail(event.target.value)}
                     />
                   </span>
                 </label>
@@ -284,7 +284,7 @@ const SignIn = () => {
                       placeholder={isSignup ? "Create a strong password" : "Enter your password"}
                       className="w-full bg-transparent text-base outline-none placeholder:text-gray-400"
                       value={password}
-                      onChange={(event)=> setPassword(event.target.value)}
+                      onChange={(event) => setPassword(event.target.value)}
                     />
                   </span>
                 </label>
@@ -330,26 +330,26 @@ const SignIn = () => {
                 </button>
 
                 <div className="my-5 flex items-center gap-3">
-                    <div className="h-px flex-1 bg-gray-200" />
-                    <span className="text-sm font-semibold text-gray-400">
-                        OR
-                    </span>
-                    <div className="h-px flex-1 bg-gray-200" />
+                  <div className="h-px flex-1 bg-gray-200" />
+                  <span className="text-sm font-semibold text-gray-400">
+                    OR
+                  </span>
+                  <div className="h-px flex-1 bg-gray-200" />
                 </div>
 
                 <div className="w-fullgap-3 rounded-lg bg-orange-500 px-1 py-[1px] text-lg font-black text-white shadow-[0_16px_36px_rgba(249,115,22,.55)] transition hover:bg-purple-900">
-                    <GoogleLogin
-                        onSuccess={handleGoogleLogin}
-                        onError={() => {
-                            console.log("Google Login Failed");
-                        }}
-                        theme="filled_orange"
-                        size="extra large"
-                        text="continue_with"
-                        shape="rectangular"
-                        width="100%"
-                        height="500px"
-                    />
+                  <GoogleLogin
+                    onSuccess={handleGoogleLogin}
+                    onError={() => {
+                      console.log("Google Login Failed");
+                    }}
+                    theme="filled_orange"
+                    size="extra large"
+                    text="continue_with"
+                    shape="rectangular"
+                    width="100%"
+                    height="5000px"
+                  />
                 </div>
               </form>
 

@@ -13,10 +13,85 @@ import { FaHeart, FaRegHeart } from "react-icons/fa";
 import axios from "axios";
 import { getItemIdentity } from "../utils/cartTotals";
 
+const mainCategories = [
+  {
+    name: "Vegetables & Fruits",
+    image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=300&auto=format&fit=crop&q=60",
+  },
+  {
+    name: "Atta, Rice & Dal",
+    image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=300&auto=format&fit=crop&q=60",
+  },
+  {
+    name: "Oil, Ghee & Masala",
+    image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=300&auto=format&fit=crop&q=60",
+  },
+  {
+    name: "Dairy, Bread & Egg",
+    image: "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=300&auto=format&fit=crop&q=60",
+  },
+  {
+    name: "Bakery & Biscuits",
+    image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300&auto=format&fit=crop&q=60",
+  },
+  {
+    name: "Dry Fruits & Cereals",
+    image: "https://images.unsplash.com/photo-1607664608695-45aaa6d621fc?w=300&auto=format&fit=crop&q=60",
+  },
+  {
+    name: "Chicken, Meat & Fish",
+    image: "https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=300&auto=format&fit=crop&q=60",
+  },
+  {
+    name: "Kitchenware & Appliances",
+    image: "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=300&auto=format&fit=crop&q=60",
+  }
+];
+
+const snacksCategories = [
+  {
+    name: "Chips & Namkeen",
+    image: "https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=300&auto=format&fit=crop&q=60",
+  },
+  {
+    name: "Sweets & Chocolates",
+    image: "https://images.unsplash.com/photo-1581798459219-318e76aecc7b?w=300&auto=format&fit=crop&q=60",
+  },
+  {
+    name: "Drinks & Juices",
+    image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=300&auto=format&fit=crop&q=60",
+  },
+  {
+    name: "Tea, Coffee & Milk Drinks",
+    image: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=300&auto=format&fit=crop&q=60",
+  }
+];
+
+const allCategories = [...mainCategories, ...snacksCategories];
+
+const mapCategoryToDbCategories = (selectedCategory) => {
+  switch (selectedCategory) {
+    case "Vegetables & Fruits":
+      return ["Fruites", "Fruits", "fruits", "fruites"];
+    case "Dairy, Bread & Egg":
+      return ["Dairy", "dairy"];
+    case "Snacks & Drinks":
+    case "Chips & Namkeen":
+    case "Drinks & Juices":
+      return ["Snacks", "Snacks ", "Drinks", "drinks", "snacks", "drinks "];
+    case "Atta, Rice & Dal":
+    case "Oil, Ghee & Masala":
+      return ["Grocery", "grocery"];
+    default:
+      return [selectedCategory];
+  }
+};
+
 const ProductPage = () => {
   const dispatch = useDispatch();
 
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -28,6 +103,15 @@ const ProductPage = () => {
   const favorites = useSelector(
     (state) => state.favorite.favorites
   );
+
+  const filteredProducts = activeCategory
+    ? products.filter((product) => {
+      const dbCats = mapCategoryToDbCategories(activeCategory);
+      return dbCats.some(
+        (c) => product.category?.trim().toLowerCase() === c.toLowerCase()
+      );
+    })
+    : products;
 
   // Calculate total cart quantity
   const cartCount = cart.reduce(
@@ -68,7 +152,7 @@ const ProductPage = () => {
 
         setError(
           err.response?.data?.message ||
-            "Unable to load products. Please try again."
+          "Unable to load products. Please try again."
         );
 
         setProducts([]);
@@ -129,6 +213,82 @@ const ProductPage = () => {
       <Banner />
 
       {/* =========================
+          CATEGORY SELECTOR SECTION
+      ========================= */}
+      <section className="max-w-10xl mx-auto px-4 py-4 bg-white/50 backdrop-blur border-b border-gray-100">
+        {/* Desktop View: Single horizontal scrolling row */}
+        <div className="hidden md:flex flex-row items-center justify-between gap-4 overflow-x-auto py-2 px-1 scrollbar-none">
+          {allCategories.map((cat) => (
+            <div
+              key={cat.name}
+              onClick={() => setActiveCategory(activeCategory === cat.name ? null : cat.name)}
+              className={`flex flex-col items-center p-3 rounded-2xl border transition text-center cursor-pointer select-none min-w-[100px] flex-1 ${activeCategory === cat.name
+                ? "border-orange-500 bg-orange-50 shadow-md transform scale-[1.02]"
+                : "border-gray-100 bg-white hover:border-orange-400 hover:shadow-sm"
+                }`}
+            >
+              <div className="w-14 h-14 overflow-hidden rounded-xl bg-gray-50 flex items-center justify-center border border-gray-100">
+                <img src={cat.image} alt={cat.name} className="w-full h-full object-cover animate-fadeIn" />
+              </div>
+              <p className="text-[11px] font-bold text-purple-950 mt-2 line-clamp-2 leading-tight">
+                {cat.name}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Mobile/Tablet View: Category Grids */}
+        <div className="flex flex-col md:hidden gap-3 py-2">
+          {/* Main Grid (8 categories) */}
+          <div className="grid grid-cols-4 gap-2">
+            {mainCategories.map((cat) => (
+              <div
+                key={cat.name}
+                onClick={() => setActiveCategory(activeCategory === cat.name ? null : cat.name)}
+                className={`flex flex-col items-center p-2 rounded-xl border transition text-center cursor-pointer select-none ${activeCategory === cat.name
+                  ? "border-orange-500 bg-orange-50 shadow-sm transform scale-[1.02]"
+                  : "border-gray-100 bg-white hover:border-orange-400"
+                  }`}
+              >
+                <div className="w-10 h-10 overflow-hidden rounded-lg bg-gray-50 flex items-center justify-center">
+                  <img src={cat.image} alt={cat.name} className="w-full h-full object-cover" />
+                </div>
+                <p className="text-[8px] md:text-[9px] font-bold text-purple-950 mt-1 line-clamp-2 leading-tight">
+                  {cat.name}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Snacks & Drinks Section */}
+          <div className="mt-3">
+            <h3 className="text-sm font-black uppercase tracking-wider text-purple-950">Snacks & Drinks</h3>
+          </div>
+
+          {/* Snacks Grid (4 categories) */}
+          <div className="grid grid-cols-4 gap-2">
+            {snacksCategories.map((cat) => (
+              <div
+                key={cat.name}
+                onClick={() => setActiveCategory(activeCategory === cat.name ? null : cat.name)}
+                className={`flex flex-col items-center p-2 rounded-xl border transition text-center cursor-pointer select-none ${activeCategory === cat.name
+                  ? "border-orange-500 bg-orange-50 shadow-sm transform scale-[1.02]"
+                  : "border-gray-100 bg-white hover:border-orange-400"
+                  }`}
+              >
+                <div className="w-10 h-10 overflow-hidden rounded-lg bg-gray-50 flex items-center justify-center">
+                  <img src={cat.image} alt={cat.name} className="w-full h-full object-cover" />
+                </div>
+                <p className="text-[8px] md:text-[9px] font-bold text-purple-950 mt-1 line-clamp-2 leading-tight">
+                  {cat.name}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* =========================
           PRODUCTS SECTION
       ========================= */}
       <section className="min-h-screen bg-gray-100 px-3 py-5">
@@ -164,7 +324,7 @@ const ProductPage = () => {
         ========================= */}
         {!loading &&
           !error &&
-          products.length === 0 && (
+          filteredProducts.length === 0 && (
             <div className="flex min-h-[300px] items-center justify-center">
               <p className="text-lg font-bold text-gray-600">
                 No products available.
@@ -175,10 +335,10 @@ const ProductPage = () => {
         {/* =========================
             PRODUCT GRID
         ========================= */}
-        {!loading && products.length > 0 && (
+        {!loading && filteredProducts.length > 0 && (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
 
-            {products.map((product, index) => {
+            {filteredProducts.map((product, index) => {
               const isFavorite = isProductFavorite(product);
 
               const productKey =

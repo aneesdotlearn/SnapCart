@@ -16,24 +16,24 @@ const Favorite = () => {
   const favorites = useSelector((state) => state.favorite.favorites);
 
   const [isCartOpen, setIsCartOpen] = useState(false);
-      // const count = useSelector((state) => state.cart.items.length);
-      // const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
-      // const cartCount = useSelector((state) => state.cart.items.length);
-      const cartCount = useSelector((state) =>
-        state.cart.items.reduce(
-          (sum, item) => sum + item.quantity,
-          0
-        )
-      );
+  // const count = useSelector((state) => state.cart.items.length);
+  // const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+  // const cartCount = useSelector((state) => state.cart.items.length);
+  const cartCount = useSelector((state) =>
+    state.cart.items.reduce(
+      (sum, item) => sum + item.quantity,
+      0
+    )
+  );
 
 
-  
+
   console.log(favorites);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
-      <Navbar cartCount={cartCount} openCart={() => setIsCartOpen(true)}/>
-    <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)}/>
+      <Navbar cartCount={cartCount} openCart={() => setIsCartOpen(true)} />
+      <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
 
       <main className="flex-1 px-4 py-6">
         <h1 className="text-3xl font-bold text-center mb-8">
@@ -53,7 +53,7 @@ const Favorite = () => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
             {favorites.map((fav, index) => (
               <div
                 key={getItemIdentity(fav) || `${fav.name}-${index}`}
@@ -69,21 +69,21 @@ const Favorite = () => {
                     className="h-[120px]"
                   />
 
-                  
+
                 </div>
-                
-                  <h2 className="text-lg font-semibold text-purple-900 min-h-[60px] line-clamp-2">
-                      {fav.name}
-                    </h2>
-                  <div className="flex flex-row items-center gap-2">
-                    <p className="font-bold text-orange-500 mt-2">
-                      ₹{fav.price}
-                    </p>
-                    <del className="text-gray-500 mt-2">
-                      ₹{(fav.price * 1.2).toFixed(2)}
-                    </del>
-                  </div>
-                
+
+                <h2 className="text-lg font-semibold text-purple-900 min-h-[60px] line-clamp-2">
+                  {fav.name}
+                </h2>
+                <div className="flex flex-row items-center gap-2">
+                  <p className="font-bold text-orange-500 mt-2">
+                    ₹{fav.price}
+                  </p>
+                  <del className="text-gray-500 mt-2">
+                    ₹{(fav.price * 1.2).toFixed(2)}
+                  </del>
+                </div>
+
 
                 <div className="flex justify-between gap-3 pb-2">
                   <button
@@ -100,7 +100,7 @@ const Favorite = () => {
                     <MdDeleteOutline size={22} className="text-orange-500" />
                   </button>
                 </div>
-                
+
               </div>
             ))}
           </div>
