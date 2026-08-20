@@ -1,13 +1,43 @@
-const express = require('express');
-const router = express.Router();
-const { createProduct, getAllProducts, getProductById, updateProduct, deleteProduct } = require('../Controller/ProductController');
-const UserAuth = require("../Middleware/authMiddleware");
-const AdminAuth = require("../Middleware/adminMiddleware");
+const express = require("express");
 
-router.post('/create', createProduct);
-router.get('/products', getAllProducts);
-router.get('/products/:id', getProductById);
-router.put('/products/:id', updateProduct);
-router.delete('/products/:id', deleteProduct);
+const router = express.Router();
+
+const {
+  createProduct,
+  getAllProducts,
+  getProductById,
+  updateProduct,
+  deleteProduct,
+  clearProductCache,
+} = require("../Controller/ProductController");
+
+
+// =====================================================
+// PRODUCT ROUTES
+// =====================================================
+
+// Create product
+router.post("/create", createProduct);
+
+// Get all products
+router.get("/products", getAllProducts);
+
+// Get product by custom id
+router.get("/products/:id", getProductById);
+
+// Update product by custom id
+router.put("/products/:id", updateProduct);
+
+// Delete product by custom id
+router.delete("/products/:id", deleteProduct);
+
+
+// =====================================================
+// REDIS CACHE
+// =====================================================
+
+// Clear all product Redis cache
+router.delete("/cache/clear", clearProductCache);
+
 
 module.exports = router;

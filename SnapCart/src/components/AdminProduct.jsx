@@ -3,6 +3,7 @@ import axios from "axios";
 import Footer from "./Footer";
 // import Navbar from "./Navbar";
 import AdminNavbar from "./AdminNavbar";
+import { getItemIdentity } from "../utils/cartTotals";
 
 const emptyForm = {
   id: "",
@@ -21,7 +22,15 @@ const AdminProduct = () => {
 
   const fetchProducts = async () => {
     try {
-      const resp = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/products`);
+      const resp = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/products`, {
+        headers: {
+          "Cache-Control": "no-cache",
+        },
+        params: {
+          fresh: "true",
+          t: Date.now(),
+        },
+      });
       setProducts(resp.data.data || resp.data.products || []);
     } catch (err) {
       console.log(err);
@@ -59,15 +68,49 @@ const AdminProduct = () => {
     Authorization: `Bearer ${localStorage.getItem("token")}`,
   });
 
+  const clearProductCache = async () => {
+    try {
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/cache/clear`, {
+        headers: getAuthHeaders(),
+      });
+    } catch (error) {
+      console.log("Product cache clear failed:", error);
+    }
+  };
+
+  const requestWithIdFallback = async (request, product) => {
+    const primaryId = product._id || product.id;
+    const fallbackId = product.id;
+
+    try {
+      return await request(primaryId);
+    } catch (error) {
+      const canRetryWithCustomId =
+        error.response?.status === 404 &&
+        fallbackId &&
+        fallbackId !== primaryId;
+
+      if (!canRetryWithCustomId) {
+        throw error;
+      }
+
+      return request(fallbackId);
+    }
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setMessage("");
 
     try {
       if (editId) {
-        await axios.put(`${import.meta.env.VITE_BACKEND_URL}/products/${editId}`, getPayload(), {
-          headers: getAuthHeaders(),
-        });
+        await requestWithIdFallback(
+          (id) =>
+            axios.put(`${import.meta.env.VITE_BACKEND_URL}/products/${id}`, getPayload(), {
+              headers: getAuthHeaders(),
+            }),
+          formData,
+        );
         setMessage("Product updated successfully");
       } else {
         await axios.post(`${import.meta.env.VITE_BACKEND_URL}/create`, getPayload(), {
@@ -76,8 +119,9 @@ const AdminProduct = () => {
         setMessage("Product created successfully");
       }
 
+      await clearProductCache();
       resetForm();
-      fetchProducts();
+      await fetchProducts();
     } catch (err) {
       console.log(err);
       setMessage(err.response?.data?.message || "Operation failed");
@@ -85,8 +129,9 @@ const AdminProduct = () => {
   };
 
   const handleEditClick = (product) => {
-    setEditId(product.id);
+    setEditId(product._id || product.id);
     setFormData({
+      _id: product._id || "",
       id: product.id || "",
       name: product.name || "",
       price: product.price || "",
@@ -97,18 +142,23 @@ const AdminProduct = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleDeleteClick = async (id) => {
+  const handleDeleteClick = async (product) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this product?");
     if (!confirmDelete) {
       return;
     }
 
     try {
-      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/products/${id}`, {
-        headers: getAuthHeaders(),
-      });
+      await requestWithIdFallback(
+        (id) =>
+          axios.delete(`${import.meta.env.VITE_BACKEND_URL}/products/${id}`, {
+            headers: getAuthHeaders(),
+          }),
+        product,
+      );
       setMessage("Product deleted successfully");
-      fetchProducts();
+      await clearProductCache();
+      await fetchProducts();
     } catch (err) {
       console.log(err);
       setMessage(err.response?.data?.message || "Failed to delete product");
@@ -246,15 +296,18 @@ const AdminProduct = () => {
           </h2>
 
           <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
-            {products.map((product) => (
+            {products.map((product, index) => (
               <article
-                key={product.id}
+                key={getItemIdentity(product) || `${product.name}-${index}`}
                 className="flex flex-col justify-between rounded-lg border bg-white p-4 shadow-sm"
               >
                 <div>
                   <img
                     src={product.image}
                     alt={product.name}
+                    onError={(event) => {
+                      event.currentTarget.src = "/favicon.svg";
+                    }}
                     className="mb-3 h-36 w-full object-contain"
                   />
                   <h3 className="line-clamp-2 font-bold text-purple-950">
@@ -281,7 +334,7 @@ const AdminProduct = () => {
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleDeleteClick(product.id)}
+                    onClick={() => handleDeleteClick(product)}
                     className="flex-1 rounded-lg border border-red-600 py-2 font-bold text-red-600 transition hover:bg-red-600 hover:text-white"
                   >
                     Delete

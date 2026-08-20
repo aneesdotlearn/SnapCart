@@ -14,6 +14,9 @@ export const getCartTotal = (items = []) =>
 export const getCartCount = (items = []) =>
   items.reduce((total, item) => total + (Number(item.quantity) || 0), 0);
 
+export const getItemIdentity = (item = {}) =>
+  item._id || item.productId || item.id;
+
 export const getDeliveryCharge = (subtotal) =>
   subtotal > 0 && subtotal < 99 ? 30 : 0;
 

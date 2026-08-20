@@ -81,7 +81,7 @@ const Navbar = ({cartCount, openCart}) => {
       <div className=' flex  gap-2'>
         
       {user?
-      (<button onClick={() => navigate("/")} className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-orange-400 hover:text-white transition">
+      (<button onClick={() => navigate("/profile")} className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-orange-400 hover:text-white transition">
         <FiUser size={18} />
         {user.name}
       </button>):(<button onClick={() => navigate("/login")} className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-orange-400 hover:text-white transition">
@@ -108,10 +108,12 @@ const Navbar = ({cartCount, openCart}) => {
 
       <button onClick={openCart} className = "bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-orange-400 hover:text-white transition"><FaShoppingCart />Cart : {cartCount || 0}</button>
 
-      <button onClick={handleLogout} className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-orange-400 hover:text-white transition">
-        <FiUser size={18} />
-        Logout
-      </button>
+      {user && (
+        <button onClick={handleLogout} className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-orange-400 hover:text-white transition">
+          <FiUser size={18} />
+          Logout
+        </button>
+      )}
       </div>
     </div>
     </nav>

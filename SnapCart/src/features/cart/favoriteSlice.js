@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { getItemIdentity } from "../../utils/cartTotals";
 
 const initialState = {
   favorites: [],
@@ -10,14 +11,15 @@ const favoriteSlice = createSlice({
   reducers: {
     toggleFavorite: (state, action) => {
       const fav = action.payload;
+      const favIdentity = getItemIdentity(fav);
 
       const existingItem = state.favorites.find(
-        (i) => i.id === fav.id
+        (i) => getItemIdentity(i) === favIdentity
       );
 
       if (existingItem) {
         state.favorites = state.favorites.filter(
-          (i) => i.id !== fav.id
+          (i) => getItemIdentity(i) !== favIdentity
         );
       } else {
         state.favorites.push(fav);

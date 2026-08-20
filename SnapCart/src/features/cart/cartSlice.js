@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getCartTotal } from "../../utils/cartTotals";
+import { getCartTotal, getItemIdentity } from "../../utils/cartTotals";
 
 const getStoredCart = () => {
   if (typeof localStorage === "undefined") {
@@ -41,7 +41,10 @@ const cartSlice = createSlice({
   reducers: {
     addToCart: (state, action) => {
       const item = action.payload;
-      const existingItem = state.items.find((cartItem) => cartItem.id === item.id);
+      const itemIdentity = getItemIdentity(item);
+      const existingItem = state.items.find(
+        (cartItem) => getItemIdentity(cartItem) === itemIdentity,
+      );
 
       if (existingItem) {
         existingItem.quantity += 1;
@@ -56,12 +59,16 @@ const cartSlice = createSlice({
     },
 
     removeFromCart: (state, action) => {
-      state.items = state.items.filter((item) => item.id !== action.payload);
+      state.items = state.items.filter(
+        (item) => getItemIdentity(item) !== action.payload,
+      );
       syncTotalAndStorage(state);
     },
 
     increaseQuantity: (state, action) => {
-      const item = state.items.find((cartItem) => cartItem.id === action.payload);
+      const item = state.items.find(
+        (cartItem) => getItemIdentity(cartItem) === action.payload,
+      );
 
       if (item) {
         item.quantity += 1;
@@ -71,7 +78,9 @@ const cartSlice = createSlice({
     },
 
     decreaseQuantity: (state, action) => {
-      const item = state.items.find((cartItem) => cartItem.id === action.payload);
+      const item = state.items.find(
+        (cartItem) => getItemIdentity(cartItem) === action.payload,
+      );
 
       if (!item) {
         return;
@@ -81,7 +90,7 @@ const cartSlice = createSlice({
         item.quantity -= 1;
       } else {
         state.items = state.items.filter(
-          (cartItem) => cartItem.id !== action.payload,
+          (cartItem) => getItemIdentity(cartItem) !== action.payload,
         );
       }
 
@@ -89,7 +98,9 @@ const cartSlice = createSlice({
     },
 
     clearItem: (state, action) => {
-      state.items = state.items.filter((item) => item.id !== action.payload);
+      state.items = state.items.filter(
+        (item) => getItemIdentity(item) !== action.payload,
+      );
       syncTotalAndStorage(state);
     },
 

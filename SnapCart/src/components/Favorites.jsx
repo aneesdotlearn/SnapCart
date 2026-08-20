@@ -8,6 +8,7 @@ import { MdDeleteOutline } from "react-icons/md";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import { useState } from "react";
+import { getItemIdentity } from "../utils/cartTotals";
 
 const Favorite = () => {
   const dispatch = useDispatch();
@@ -53,15 +54,18 @@ const Favorite = () => {
           </div>
         ) : (
           <div className="grid grid-cols-6 gap-4">
-            {favorites.map((fav) => (
+            {favorites.map((fav, index) => (
               <div
-                key={fav.id}
+                key={getItemIdentity(fav) || `${fav.name}-${index}`}
                 className="bg-white p-2 rounded-lg shadow-md flex flex-col items-center gap-3 cursor-pointer hover:scale-105
                         transition duration-300">
                 <div className="flex items-center gap-5">
                   <img
                     src={fav.image}
                     alt={fav.name}
+                    onError={(event) => {
+                      event.currentTarget.src = "/favicon.svg";
+                    }}
                     className="h-[120px]"
                   />
 

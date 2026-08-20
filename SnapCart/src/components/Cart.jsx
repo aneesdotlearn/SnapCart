@@ -20,6 +20,7 @@ import {
   getCartTotal,
   getDeliveryCharge,
   getGrandTotal,
+  getItemIdentity,
   HANDLING_CHARGE,
 } from "../utils/cartTotals";
 
@@ -93,19 +94,23 @@ const Cart = ({ onClose }) => {
         ) : (
           <>
             <div className="space-y-3 p-3">
-              {cart.map((item) => {
+              {cart.map((item, index) => {
                 const unitPrice = Number(item.price) || 0;
                 const totalPrice = unitPrice * item.quantity;
+                const itemIdentity = getItemIdentity(item);
 
                 return (
                   <div
-                    key={item.id}
+                    key={itemIdentity || `${item.name}-${index}`}
                     className="flex flex-col gap-4 border border-gray-100 bg-white p-4 shadow-sm lg:flex-row lg:items-center lg:justify-between"
                   >
                     <div className="flex items-center gap-4 lg:w-[48%]">
                       <img
                         src={item.image}
                         alt={item.name}
+                        onError={(event) => {
+                          event.currentTarget.src = "/favicon.svg";
+                        }}
                         className="h-16 w-16 flex-none object-contain"
                       />
 
@@ -130,7 +135,7 @@ const Cart = ({ onClose }) => {
                         
                         <button
                           type="button"
-                          onClick={() => dispatch(decreaseQuantity(item.id))}
+                          onClick={() => dispatch(decreaseQuantity(itemIdentity))}
                           className="flex h-10 w-10 items-center justify-center text-white transition hover:bg-orange-600"
                           aria-label={`Decrease ${item.name}`}
                           title="Decrease quantity"
@@ -144,7 +149,7 @@ const Cart = ({ onClose }) => {
 
                         <button
                           type="button"
-                          onClick={() => dispatch(increaseQuantity(item.id))}
+                          onClick={() => dispatch(increaseQuantity(itemIdentity))}
                           className="flex h-10 w-10 items-center justify-center text-white transition hover:bg-orange-600"
                           aria-label={`Increase ${item.name}`}
                           title="Increase quantity"
