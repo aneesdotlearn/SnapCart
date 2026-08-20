@@ -21,6 +21,8 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../../features/user/userSlice";
 
+import { GoogleLogin } from "@react-oauth/google";
+
 const fieldBase =
   "flex items-center gap-3 rounded-lg border border-orange-100 bg-white/90 px-4 py-3 text-purple-950 shadow-sm";
 
@@ -28,6 +30,9 @@ const SignUp = () => {
   const mode = 'signup';
   const isSignup = true;
   const navigate = useNavigate();
+  const returnTo =
+    new URLSearchParams(location.search).get("returnTo") || "/";
+  const dispatch = useDispatch();
   const [name, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -58,31 +63,60 @@ const SignUp = () => {
   );
 
 
+
+  const handleGoogleLogin = async (credentialResponse) => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/users/google-login`,
+        {
+          credential: credentialResponse.credential,
+        }
+      );
+
+      if (response.data.success) {
+        dispatch(
+          loginSuccess({
+            user: response.data.user,
+            token: response.data.token,
+          })
+        );
+
+        navigate(returnTo, { replace: true } || navigate("/"));
+      }
+    } catch (error) {
+      console.error(
+        "Google login failed:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response =await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/register`,{
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/register`, {
         name,
         email,
         password
       })
       console.log(response.data);
       if (response.data.success) {
-          setSubmitted(true);
+        setSubmitted(true);
       }
-      
+
       const userPayload = response.data.user || response.data.newuser;
-      if(response.data.token){
+      if (response.data.token) {
         dispatch(
           loginSuccess({
             user: userPayload,
             token: response.data.token
           })
 
-      )
+        )
       }
       navigate("/");
-    } catch(err) {
+    } catch (err) {
       console.log(err);
     }
   };
@@ -90,7 +124,7 @@ const SignUp = () => {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-orange-50 text-purple-950">
-      
+
       <div
         className="absolute inset-0 opacity-45"
         style={{
@@ -294,6 +328,29 @@ const SignUp = () => {
                   {page.action}
                   <FiArrowRight />
                 </button>
+
+                <div className="my-5 flex items-center gap-3">
+                  <div className="h-px flex-1 bg-gray-200" />
+                  <span className="text-sm font-semibold text-gray-400">
+                    OR
+                  </span>
+                  <div className="h-px flex-1 bg-gray-200" />
+                </div>
+
+                <div className="w-fullgap-3 rounded-lg bg-orange-500 px-1 py-[1px] text-lg font-black text-white shadow-[0_16px_36px_rgba(249,115,22,.55)] transition hover:bg-purple-900">
+                  <GoogleLogin
+                    onSuccess={handleGoogleLogin}
+                    onError={() => {
+                      console.log("Google Login Failed");
+                    }}
+                    theme="filled_orange"
+                    size="extra large"
+                    text="continue_with"
+                    shape="rectangular"
+                    width="100%"
+                    height="5000px"
+                  />
+                </div>
               </form>
 
               {submitted && (

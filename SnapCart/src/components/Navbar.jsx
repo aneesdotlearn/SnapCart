@@ -3,10 +3,10 @@ import search from "../assets/bg-img/search.svg";
 import { useNavigate } from 'react-router-dom';
 import { FaShoppingCart } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
+import { FiLogOut } from "react-icons/fi";
 import { FaRegHeart } from "react-icons/fa";
-import { FiUser } from "react-icons/fi";
+import { FiUser, FiSearch, FiMenu, FiX } from "react-icons/fi";
 import { useState, useEffect } from "react";
-import { FiSearch } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from '../features/user/userSlice';
 
@@ -19,103 +19,217 @@ const placeholders = [
   'Search "Rice"',
 ];
 
-const Navbar = ({cartCount, openCart}) => {
-  const [isCartOpen, setIsCartOpen] = useState(false);
+const Navbar = ({ cartCount, openCart }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [placeholder, setPlaceholder] = useState(placeholders[0]);
 
-    const [placeholder, setPlaceholder] = useState(placeholders[0]);
+  useEffect(() => {
+    let index = 0;
+    const interval = setInterval(() => {
+      index = (index + 1) % placeholders.length;
+      setPlaceholder(placeholders[index]);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
 
-      useEffect(() => {
-        let index = 0;
-
-        const interval = setInterval(() => {
-          index = (index + 1) % placeholders.length;
-          setPlaceholder(placeholders[index]);
-        }, 2000); // Changes every 2 seconds
-
-        return () => clearInterval(interval);
-      }, []);
-  
   const navigate = useNavigate();
   const dispatch = useDispatch();
-    const { user } = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.user);
+
   useEffect(() => {
-  console.log("User changed:", user);
-}, [user]);
+    console.log("User changed:", user);
+  }, [user]);
+
   const handleLogout = () => {
     dispatch(logout());
     navigate("/login");
   }
 
   return (
-    <nav className="bg-orange-400 text-white py-6">
-    <div className="flex justify-between items-center px-4">
-      <div className="flex items-center gap-8">
-        <h1 className="font-bold text-4xl cursor-pointer" onClick={() => navigate("/")}>SnapCart</h1>
-        <div className="flex gap-6">
-          <button 
-            onClick={() => navigate("/")} 
+    <nav className="bg-gradient-to-b from-red-600 to-orange-500 text-white py-4 shadow-md sticky top-0 z-50">
+      <div className=" mx-auto px-1 flex flex-col md:flex-row md:items-center justify-between gap-8">
+        {/* Top Row: Logo & Hamburger button */}
+        <div className="flex justify-between items-center w-full md:w-auto">
+          <h1 className="font-bold text-3xl md:text-4xl cursor-pointer tracking-tight" onClick={() => { setIsMenuOpen(false); navigate("/"); }}>
+            SnapCart
+          </h1>
+
+          <div className="md:hidden pl-4 flex items-center gap-1">
+            {user ? (
+              <button onClick={() => navigate("/profile")} className="text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-purple-900 hover:text-white transition shadow-sm">
+                <FiUser size={12} />
+
+              </button>
+            ) : (
+              <button onClick={() => navigate("/login")} className="text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-purple-900 hover:text-white transition shadow-sm">
+                <FiUser size={12} />
+                Login
+              </button>
+            )}
+
+            <button
+              onClick={() => navigate("/favorites")}
+              className="text-purple-800 p-2.5 rounded-full hover:bg-purple-900 hover:text-white transition shadow-sm"
+              aria-label="Favorites"
+            >
+              <FaRegHeart size={12} />
+            </button>
+
+            <button onClick={openCart} className="text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-purple-900 hover:text-white transition shadow-sm text-xs">
+              <FaShoppingCart size={12} />
+              {cartCount || 0}
+            </button>
+
+            {user && (
+              <button onClick={handleLogout} className="text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-purple-900 hover:text-white transition shadow-sm">
+                <FiLogOut size={12} />
+              </button>
+            )}
+          </div>
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="text-white hover:text-purple-900 transition focus:outline-none md:hidden p-2"
+            aria-label="Toggle menu"
+          >
+            {isMenuOpen ? <FiX size={28} /> : <FiMenu size={28} />}
+          </button>
+        </div>
+
+        {/* Desktop Links (always visible on md+) */}
+        <div className="hidden md:flex items-center gap-6">
+          <button
+            onClick={() => navigate("/")}
             className="text-lg font-bold hover:text-purple-900 transition underline-offset-4 hover:underline"
           >
             Home
           </button>
           {user && (
-            <button 
-              onClick={() => navigate("/orders")} 
+            <button
+              onClick={() => navigate("/orders")}
               className="text-lg font-bold hover:text-purple-900 transition underline-offset-4 hover:underline"
             >
               My Orders
             </button>
           )}
         </div>
+
+
+
+        {/* Search Bar (Centered, responsive width) */}
+        <div className="flex items-center bg-gray-100 rounded-lg px-3 py-2 w-full md:w-[480px] lg:w-[500px] gap-2 shadow-inner">
+          <FiSearch className="text-purple-800 text-xl font-bold" />
+          <input
+            type="text"
+            placeholder={placeholder}
+            className="bg-transparent outline-none flex-1 px-2 text-purple-900 placeholder-gray-400 text-sm md:text-base"
+          />
+        </div>
+
+
+
+
+
+
+
+        {/* Desktop Action Buttons (always visible on md+) */}
+        <div className="hidden md:flex items-center gap-3">
+          {user ? (
+            <button onClick={() => navigate("/profile")} className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-purple-900 hover:text-white transition shadow-sm">
+              <FiUser size={18} />
+              {user.name}
+            </button>
+          ) : (
+            <button onClick={() => navigate("/login")} className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-purple-900 hover:text-white transition shadow-sm">
+              <FiUser size={18} />
+              Login
+            </button>
+          )}
+
+          <button
+            onClick={() => navigate("/favorites")}
+            className="bg-gray-100 text-purple-800 p-2.5 rounded-full hover:bg-purple-900 hover:text-white transition shadow-sm"
+            aria-label="Favorites"
+          >
+            <FaRegHeart size={20} />
+          </button>
+
+          <button onClick={openCart} className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-purple-900 hover:text-white transition shadow-sm">
+            <FaShoppingCart />
+            Cart: {cartCount || 0}
+          </button>
+
+          {user && (
+            <button onClick={handleLogout} className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-purple-900 hover:text-white transition shadow-sm">
+              Logout
+            </button>
+          )}
+        </div>
+
+        {/* Mobile Menu Dropdown (Visible only on mobile/tablet when toggled) */}
+        {isMenuOpen && (
+          <div className="flex flex-col gap-3 py-3 border-t border-orange-300 md:hidden animate-fadeIn w-full">
+            <button
+              onClick={() => { setIsMenuOpen(false); navigate("/"); }}
+              className="text-left py-2 font-bold hover:text-purple-900 transition"
+            >
+              Home
+            </button>
+            {user && (
+              <button
+                onClick={() => { setIsMenuOpen(false); navigate("/orders"); }}
+                className="text-left py-2 font-bold hover:text-purple-900 transition"
+              >
+                My Orders
+              </button>
+            )}
+            <hr className="border-orange-300 my-1" />
+            <div className="flex flex-col gap-2">
+              {user ? (
+                <button
+                  onClick={() => { setIsMenuOpen(false); navigate("/profile"); }}
+                  className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-purple-900 hover:text-white transition"
+                >
+                  <FiUser size={18} />
+                  {user.name}
+                </button>
+              ) : (
+                <button
+                  onClick={() => { setIsMenuOpen(false); navigate("/login"); }}
+                  className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-purple-900 hover:text-white transition"
+                >
+                  <FiUser size={18} />
+                  Login
+                </button>
+              )}
+
+              <button
+                onClick={() => { setIsMenuOpen(false); navigate("/favorites"); }}
+                className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-purple-900 hover:text-white transition"
+              >
+                <FaRegHeart size={18} />
+                Favorites
+              </button>
+
+              <button
+                onClick={() => { setIsMenuOpen(false); openCart(); }}
+                className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-purple-900 hover:text-white transition"
+              >
+                <FaShoppingCart />
+                Cart ({cartCount || 0})
+              </button>
+
+              {user && (
+                <button
+                  onClick={() => { setIsMenuOpen(false); handleLogout(); }}
+                  className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-purple-900 hover:text-white transition"
+                >
+                  Logout
+                </button>
+              )}
+            </div>
+          </div>
+        )}
       </div>
-      <div className="flex items-center bg-gray-100 rounded-lg px-3 py-2 w-[500px] gap-2">
-      <FiSearch className="text-purple-800 text-xl font-bold" />
-
-      <input
-        type="text"
-        placeholder={placeholder}
-        className="bg-transparent outline-none flex-1 px-2 text-purple-900"
-      />
-    </div>
-      
-      <div className=' flex  gap-2'>
-        
-      {user?
-      (<button onClick={() => navigate("/profile")} className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-orange-400 hover:text-white transition">
-        <FiUser size={18} />
-        {user.name}
-      </button>):(<button onClick={() => navigate("/login")} className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-orange-400 hover:text-white transition">
-        <FiUser size={18} />
-        Login
-      </button>)}
-      
-
-        {/* <div className='text-center'>
-        <button onClick={() => navigate('/favorites')} className = "bg-gray-100 text-purple-800 font-semibold py-1 px-2 rounded-3xl">🧡</button>
-        <p className='text-gray font-light text-xs'>Favorites</p>
-        </div> */}
-
-      <div className="text-center">
-        <button
-          onClick={() => navigate("/favorites")}
-          className="bg-gray-100 text-purple-800 p-3 rounded-full hover:bg-orange-400 hover:text-white transition"
-        >
-          <FaRegHeart size={20} />
-        </button>
-
-        
-      </div>
-
-      <button onClick={openCart} className = "bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-orange-400 hover:text-white transition"><FaShoppingCart />Cart : {cartCount || 0}</button>
-
-      {user && (
-        <button onClick={handleLogout} className="bg-gray-100 text-purple-800 font-semibold py-2 px-4 rounded-lg flex items-center gap-2 hover:bg-orange-400 hover:text-white transition">
-          <FiUser size={18} />
-          Logout
-        </button>
-      )}
-      </div>
-    </div>
     </nav>
   );
 };

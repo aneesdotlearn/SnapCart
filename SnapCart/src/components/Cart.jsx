@@ -130,9 +130,9 @@ const Cart = ({ onClose }) => {
                       </div>
                     </div>
 
-                    <div className="flex-col items-center justify-between gap-3 lg:flex-none">
+                    <div className="flex items-center justify-between gap-3 lg:flex-none">
                       <div className="flex h-10 items-center overflow-hidden rounded-lg bg-orange-500">
-                        
+
                         <button
                           type="button"
                           onClick={() => dispatch(decreaseQuantity(itemIdentity))}
@@ -156,9 +156,9 @@ const Cart = ({ onClose }) => {
                         >
                           <FaPlus size={10} />
                         </button>
-                        
+
                       </div>
-                      
+
                       {/* <button
                         type="button"
                         onClick={() => dispatch(removeFromCart(item.id))}
