@@ -1,8 +1,14 @@
 const jwt = require('jsonwebtoken');
 
 const UserAuth = async(req,res,next)=>{
-    const token = req.header("Authorization").split(" ")[1];
-    console.log("token:", token);
+    const authHeader = req.header("Authorization");
+    if(!authHeader){
+        return res.status(400).json({
+            status:"failure",
+            message:"Authorization header not found"
+        })
+    }
+    const token = authHeader.split(" ")[1];
     if(!token){
         return res.status(400).json({
             status:"failure",

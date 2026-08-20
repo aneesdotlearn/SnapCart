@@ -22,6 +22,12 @@ const createOrder = async (req, res) => {
       paymentStatus,
     });
 
+    try {
+      await redisClient.del("orders");
+    } catch (cacheErr) {
+      console.error("Failed to delete orders cache:", cacheErr);
+    }
+
     res.status(201).json({
       success: true,
       message: "Order placed successfully",
@@ -168,12 +174,19 @@ const updateOrderStatus = async (req, res) => {
       });
     }
 
+    try {
+      await redisClient.del("orders");
+    } catch (cacheErr) {
+      console.error("Failed to delete orders cache:", cacheErr);
+    }
+
     res.status(200).json({
       success: true,
       message: "Order updated successfully",
       data: order,
     });
   } catch (error) {
+    console.error("Error in updateOrderStatus:", error);
     res.status(500).json({
       success: false,
       message: error.message,
@@ -193,6 +206,12 @@ const deleteOrder = async (req, res) => {
         success: false,
         message: "Order not found",
       });
+    }
+
+    try {
+      await redisClient.del("orders");
+    } catch (cacheErr) {
+      console.error("Failed to delete orders cache:", cacheErr);
     }
 
     res.status(200).json({
