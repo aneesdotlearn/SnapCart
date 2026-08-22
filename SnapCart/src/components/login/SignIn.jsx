@@ -363,7 +363,7 @@ const SignIn = () => {
                   <div className="h-px flex-1 bg-gray-200" />
                 </div>
 
-                <div className="w-full gap-3 rounded-lg bg-orange-500 px-1 py-[1px] text-lg font-black text-white shadow-[0_16px_36px_rgba(249,115,22,.55)] transition hover:bg-purple-900">
+                <div className="w-full gap-3 rounded-lg bg-orange-500 px-1 py-[1px] text-lg font-black text-white shadow-[0_16px_36px_rgba(249,115,22,.55)] transition hover:bg-purple-800">
                   <GoogleLogin
                     onSuccess={handleGoogleLogin}
                     onError={() => {
