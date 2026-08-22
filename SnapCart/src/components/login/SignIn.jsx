@@ -139,11 +139,10 @@ const SignIn = () => {
     <main className="relative min-h-screen overflow-hidden bg-orange-50 text-purple-950">
       {/* Toast Notification */}
       {toast.message && (
-        <div className={`fixed top-5 right-5 z-[9999] flex items-center gap-3 rounded-lg border px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.15)] transition-all duration-300 ${
-          toast.type === "success"
-            ? "border-green-200 bg-green-50 text-green-800"
-            : "border-red-200 bg-red-50 text-red-800"
-        }`}>
+        <div className={`fixed top-5 right-5 z-[9999] flex items-center gap-3 rounded-lg border px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.15)] transition-all duration-300 ${toast.type === "success"
+          ? "border-green-200 bg-green-50 text-green-800"
+          : "border-red-200 bg-red-50 text-red-800"
+          }`}>
           {toast.type === "success" ? (
             <FiCheckCircle className="text-xl text-green-500" />
           ) : (
@@ -364,7 +363,7 @@ const SignIn = () => {
                   <div className="h-px flex-1 bg-gray-200" />
                 </div>
 
-                <div className="w-fullgap-3 rounded-lg bg-orange-500 px-1 py-[1px] text-lg font-black text-white shadow-[0_16px_36px_rgba(249,115,22,.55)] transition hover:bg-purple-900">
+                <div className="w-full gap-3 rounded-lg bg-orange-500 px-1 py-[1px] text-lg font-black text-white shadow-[0_16px_36px_rgba(249,115,22,.55)] transition hover:bg-purple-900">
                   <GoogleLogin
                     onSuccess={handleGoogleLogin}
                     onError={() => {
@@ -375,7 +374,6 @@ const SignIn = () => {
                     text="continue_with"
                     shape="rectangular"
                     width="100%"
-                    height="5000px"
                   />
                 </div>
               </form>
