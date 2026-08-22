@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 
 const { OAuth2Client } = require("google-auth-library");
 const googleClient = new OAuth2Client(
-    process.env.VITE_GOOGLE_CLIENT_ID
+    process.env.GOOGLE_CLIENT_ID || process.env.VITE_GOOGLE_CLIENT_ID
 );
 
 
@@ -22,7 +22,7 @@ const googleLogin = async (req, res) => {
 
         const ticket = await googleClient.verifyIdToken({
             idToken: credential,
-            audience: process.env.GOOGLE_CLIENT_ID,
+            audience: process.env.GOOGLE_CLIENT_ID || process.env.VITE_GOOGLE_CLIENT_ID,
         });
 
         const payload = ticket.getPayload();
@@ -153,7 +153,8 @@ const registerUser = async (req, res) => {
         res.status(201).json({
             success: true,
             message: 'User created successfully',
-            data: newuser
+            token,
+            user: newuser
         });
 
     } catch (error) {

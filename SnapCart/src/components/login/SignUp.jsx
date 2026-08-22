@@ -42,6 +42,14 @@ const SignUp = () => {
   // 3. Create a handleSubmit function for that form
   // 4. Make axios post request to the backend with the input field values
   const [submitted, setSubmitted] = useState(false);
+  const [toast, setToast] = useState({ message: "", type: "" });
+
+  const showToast = (message, type = "error") => {
+    setToast({ message, type });
+    setTimeout(() => {
+      setToast({ message: "", type: "" });
+    }, 4000);
+  };
 
   const page = useMemo(
     () => ({
@@ -81,13 +89,15 @@ const SignUp = () => {
           })
         );
 
-        navigate(returnTo, { replace: true } || navigate("/"));
+        navigate(returnTo, { replace: true });
       }
     } catch (error) {
       console.error(
         "Google login failed:",
         error.response?.data || error.message
       );
+      const errMsg = error.response?.data?.message || "Google authentication failed";
+      showToast(errMsg, "error");
     }
   };
 
@@ -117,13 +127,30 @@ const SignUp = () => {
       }
       navigate("/");
     } catch (err) {
-      console.log(err);
+      console.error(err);
+      const errMsg = err.response?.data?.message || "Failed to create user";
+      showToast(errMsg, "error");
     }
   };
 
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-orange-50 text-purple-950">
+      {/* Toast Notification */}
+      {toast.message && (
+        <div className={`fixed top-5 right-5 z-[9999] flex items-center gap-3 rounded-lg border px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.15)] transition-all duration-300 ${
+          toast.type === "success"
+            ? "border-green-200 bg-green-50 text-green-800"
+            : "border-red-200 bg-red-50 text-red-800"
+        }`}>
+          {toast.type === "success" ? (
+            <FiCheckCircle className="text-xl text-green-500" />
+          ) : (
+            <FiShield className="text-xl text-red-500" />
+          )}
+          <span className="text-sm font-bold">{toast.message}</span>
+        </div>
+      )}
 
       <div
         className="absolute inset-0 opacity-45"
